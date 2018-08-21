@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from rockstarpy import convert
+from rockstarpy.convert import convert_line
 
 
 parser = argparse.ArgumentParser(description="Python transpiler for the esoteric language Rockstar")
@@ -21,28 +21,24 @@ args = parser.parse_args()
 
 def command_line():
 
-    # connnect input
+    # open I/O
     if args.stdin:
         lyrics = sys.stdin
     else:
         lyrics = open(args.input, 'r')
 
-    # connect output
     if args.stdout:
-        bstr = False
         output = sys.stdout
     else:
-        bstr = True
         output = open(args.output, 'wb', 0)
 
-    # Read, Convert, Write, loop
+    # Read, Convert, Write (loop)
     for line in lyrics:
-        output.write( convert.convert_line(line, bstr=bstr) )
+        output.write( convert_line(line) if args.stdout
+                      else convert_line(line).encode() )
 
-    # close input
+    # close I/O
     if not args.stdin:
         lyrics.close()
-
-    # close output
     if not args.stdout:
         output.close()
